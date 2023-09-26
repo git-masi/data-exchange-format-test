@@ -35,5 +35,8 @@
     "editor.codeActionsOnSave": { "source.organizeImports": true },
     "editor.suggest.snippetsPreventQuickSuggestions": false
   },
-  "[sql]": { "editor.defaultFormatter": "mtxr.sqltools" }
+  "[sql]": {
+    "editor.defaultFormatter": "mtxr.sqltools"
+  },
+  "cSpell.words": ["upgrader"]
 }
