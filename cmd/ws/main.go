@@ -45,7 +45,7 @@ func main() {
 
 			var timestamp int64
 
-			err = binary.Read(buf, binary.BigEndian, timestamp)
+			err = binary.Read(buf, binary.BigEndian, &timestamp)
 
 			if err != nil {
 				log.Println("Error reading timestamp", err)
@@ -54,7 +54,7 @@ func main() {
 
 			var latitude float32
 
-			err = binary.Read(buf, binary.BigEndian, latitude)
+			err = binary.Read(buf, binary.BigEndian, &latitude)
 
 			if err != nil {
 				log.Println("Error reading latitude", err)
@@ -63,7 +63,7 @@ func main() {
 
 			var longitude float32
 
-			err = binary.Read(buf, binary.BigEndian, longitude)
+			err = binary.Read(buf, binary.BigEndian, &longitude)
 
 			if err != nil {
 				log.Println("Error reading longitude", err)
