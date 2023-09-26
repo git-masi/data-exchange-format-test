@@ -3,12 +3,19 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/gorilla/websocket"
 )
+
+type JsonData struct {
+	Time      int64   `json:"time"`
+	Latitude  float32 `json:"latitude"`
+	Longitude float32 `json:"longitude"`
+}
 
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -74,6 +81,30 @@ func main() {
 
 			log.Printf("time %v, latitude %v, longitude %v", t, latitude, longitude)
 		}
+	})
+
+	mux.HandleFunc("/json", func(w http.ResponseWriter, r *http.Request) {
+		headers := w.Header()
+
+		headers.Add("Access-Control-Allow-Origin", "*")
+
+		if r.Method != http.MethodPost {
+			http.NotFound(w, r)
+			return
+		}
+
+		var req JsonData
+
+		err := json.NewDecoder(r.Body).Decode(&req)
+
+		if err != nil {
+			http.Error(w, "bad request", http.StatusBadRequest)
+			return
+		}
+
+		t := time.UnixMilli(req.Time)
+
+		log.Printf("time %v, latitude %v, longitude %v", t, req.Latitude, req.Longitude)
 	})
 
 	server := http.Server{
