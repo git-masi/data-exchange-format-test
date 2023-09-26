@@ -72,7 +72,7 @@ func main() {
 
 			t := time.UnixMilli(timestamp)
 
-			log.Printf("Time of reading %v, latitude %v, longitude %v", t, latitude, longitude)
+			log.Printf("time %v, latitude %v, longitude %v", t, latitude, longitude)
 		}
 	})
 
