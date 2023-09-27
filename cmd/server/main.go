@@ -112,6 +112,13 @@ func main() {
 			t := time.UnixMilli(data.Time)
 
 			log.Printf("time %v, latitude %v, longitude %v", t, data.Latitude, data.Longitude)
+
+			err = conn.WriteJSON(data)
+
+			if err != nil {
+				log.Println("Error encoding JSON", err)
+				break
+			}
 		}
 	})
 
