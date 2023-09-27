@@ -80,9 +80,9 @@ func main() {
 
 			log.Printf("time %v, latitude %v, longitude %v", t, latitude, longitude)
 
-			// Calculate the size of one record: int64 + 4 * float32
+			// Calculate the size of one record: int64 + 2 * float32
 			// Pre-allocate a buffer
-			resp := bytes.NewBuffer(make([]byte, 0, binary.Size(int64(0))+4*binary.Size(float32(0))))
+			resp := bytes.NewBuffer(make([]byte, 0, binary.Size(int64(0))+2*binary.Size(float32(0))))
 
 			binary.Write(resp, binary.BigEndian, timestamp)
 
