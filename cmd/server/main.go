@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 type JsonData struct {
@@ -22,12 +24,26 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
+var binaryMessageLatency = prometheus.NewHistogram(
+	prometheus.HistogramOpts{
+		Name:    "binary_message_latency_milliseconds",
+		Help:    "Latency of binary WebSocket messages",
+		Buckets: prometheus.DefBuckets,
+	},
+)
+
+func init() {
+	prometheus.MustRegister(binaryMessageLatency)
+}
+
 func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.NotFound(w, r)
 	})
+
+	mux.Handle("/metrics", promhttp.Handler())
 
 	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
@@ -46,6 +62,8 @@ func main() {
 				log.Println("Error reading message from WebSocket", err)
 				break
 			}
+
+			startTime := time.Now()
 
 			buf := bytes.NewReader(message)
 
@@ -90,7 +108,19 @@ func main() {
 
 			binary.Write(resp, binary.BigEndian, longitude)
 
-			conn.WriteMessage(websocket.BinaryMessage, resp.Bytes())
+			err = conn.WriteMessage(websocket.BinaryMessage, resp.Bytes())
+
+			if err != nil {
+				log.Println("Error sending binary message", err)
+				break
+			}
+
+			endTime := time.Now()
+
+			latency := endTime.Sub(startTime).Milliseconds()
+
+			binaryMessageLatency.Observe(float64(latency))
+
 		}
 	})
 
