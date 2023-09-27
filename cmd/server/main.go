@@ -84,27 +84,38 @@ func main() {
 	})
 
 	mux.HandleFunc("/json", func(w http.ResponseWriter, r *http.Request) {
-		headers := w.Header()
-
-		headers.Add("Access-Control-Allow-Origin", "*")
-
-		if r.Method != http.MethodPost {
-			http.NotFound(w, r)
-			return
-		}
-
-		var req JsonData
-
-		err := json.NewDecoder(r.Body).Decode(&req)
+		conn, err := upgrader.Upgrade(w, r, nil)
 
 		if err != nil {
-			http.Error(w, "bad request", http.StatusBadRequest)
+			log.Println(err)
 			return
 		}
 
-		t := time.UnixMilli(req.Time)
+		defer conn.Close()
 
-		log.Printf("time %v, latitude %v, longitude %v", t, req.Latitude, req.Longitude)
+		for {
+			_, message, err := conn.ReadMessage()
+
+			if err != nil {
+				log.Println("Error reading message from WebSocket", err)
+				break
+			}
+
+			var req JsonData
+
+			buf := bytes.NewReader(message)
+
+			err = json.NewDecoder(buf).Decode(&req)
+
+			if err != nil {
+				http.Error(w, "bad request", http.StatusBadRequest)
+				break
+			}
+
+			t := time.UnixMilli(req.Time)
+
+			log.Printf("time %v, latitude %v, longitude %v", t, req.Latitude, req.Longitude)
+		}
 	})
 
 	server := http.Server{
