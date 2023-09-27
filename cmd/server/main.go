@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
-	"encoding/json"
 	"log"
 	"net/http"
 	"time"
@@ -94,27 +93,25 @@ func main() {
 		defer conn.Close()
 
 		for {
-			_, message, err := conn.ReadMessage()
+			_, _, err := conn.ReadMessage()
 
 			if err != nil {
 				log.Println("Error reading message from WebSocket", err)
 				break
 			}
 
-			var req JsonData
+			var data JsonData
 
-			buf := bytes.NewReader(message)
-
-			err = json.NewDecoder(buf).Decode(&req)
+			err = conn.ReadJSON(&data)
 
 			if err != nil {
-				http.Error(w, "bad request", http.StatusBadRequest)
+				log.Println("Error decoding JSON", err)
 				break
 			}
 
-			t := time.UnixMilli(req.Time)
+			t := time.UnixMilli(data.Time)
 
-			log.Printf("time %v, latitude %v, longitude %v", t, req.Latitude, req.Longitude)
+			log.Printf("time %v, latitude %v, longitude %v", t, data.Latitude, data.Longitude)
 		}
 	})
 
