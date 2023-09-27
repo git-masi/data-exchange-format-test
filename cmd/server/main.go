@@ -26,14 +26,23 @@ var upgrader = websocket.Upgrader{
 
 var binaryMessageLatency = prometheus.NewHistogram(
 	prometheus.HistogramOpts{
-		Name:    "binary_message_latency_milliseconds",
-		Help:    "Latency of binary WebSocket messages",
-		Buckets: prometheus.DefBuckets,
+		Name:    "binary_message_latency_microseconds",
+		Help:    "Latency of binary WebSocket messages in microseconds",
+		Buckets: []float64{1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
+	},
+)
+
+var jsonMessageLatency = prometheus.NewHistogram(
+	prometheus.HistogramOpts{
+		Name:    "json_message_latency_milliseconds",
+		Help:    "Latency of JSON WebSocket messages",
+		Buckets: []float64{1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
 	},
 )
 
 func init() {
 	prometheus.MustRegister(binaryMessageLatency)
+	prometheus.MustRegister(jsonMessageLatency)
 }
 
 func main() {
@@ -94,10 +103,6 @@ func main() {
 				break
 			}
 
-			t := time.UnixMilli(timestamp)
-
-			log.Printf("time %v, latitude %v, longitude %v", t, latitude, longitude)
-
 			// Calculate the size of one record: int64 + 2 * float32
 			// Pre-allocate a buffer
 			resp := bytes.NewBuffer(make([]byte, 0, binary.Size(int64(0))+2*binary.Size(float32(0))))
@@ -117,10 +122,9 @@ func main() {
 
 			endTime := time.Now()
 
-			latency := endTime.Sub(startTime).Milliseconds()
+			latency := endTime.Sub(startTime).Microseconds()
 
 			binaryMessageLatency.Observe(float64(latency))
-
 		}
 	})
 
@@ -142,6 +146,8 @@ func main() {
 				break
 			}
 
+			startTime := time.Now()
+
 			var data JsonData
 
 			err = conn.ReadJSON(&data)
@@ -151,16 +157,18 @@ func main() {
 				break
 			}
 
-			t := time.UnixMilli(data.Time)
-
-			log.Printf("time %v, latitude %v, longitude %v", t, data.Latitude, data.Longitude)
-
 			err = conn.WriteJSON(data)
 
 			if err != nil {
 				log.Println("Error encoding JSON", err)
 				break
 			}
+
+			endTime := time.Now()
+
+			latency := endTime.Sub(startTime).Milliseconds()
+
+			jsonMessageLatency.Observe(float64(latency))
 		}
 	})
 
