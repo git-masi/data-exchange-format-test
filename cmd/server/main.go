@@ -28,7 +28,7 @@ var binaryMessageLatency = prometheus.NewHistogram(
 	prometheus.HistogramOpts{
 		Name:    "binary_message_latency_microseconds",
 		Help:    "Latency of binary WebSocket messages in microseconds",
-		Buckets: []float64{1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
+		Buckets: []float64{5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80},
 	},
 )
 
@@ -36,7 +36,7 @@ var jsonMessageLatency = prometheus.NewHistogram(
 	prometheus.HistogramOpts{
 		Name:    "json_message_latency_milliseconds",
 		Help:    "Latency of JSON WebSocket messages",
-		Buckets: []float64{1, 2, 4, 8, 16, 32, 64, 128, 256, 512},
+		Buckets: []float64{5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20},
 	},
 )
 
