@@ -38,5 +38,9 @@
   "[sql]": {
     "editor.defaultFormatter": "mtxr.sqltools"
   },
+  "[html]": {
+    "editor.defaultFormatter": "vscode.html-language-features",
+    "editor.tabSize": 4
+  },
   "cSpell.words": ["upgrader"]
 }
