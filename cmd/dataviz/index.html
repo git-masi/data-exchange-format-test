@@ -1,0 +1,67 @@
+<html>
+
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load("current", { packages: ["corechart", "bar"] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        async function drawChart() {
+            const data = {
+                binary_message_latency_microseconds_bucket: [
+                    ['Latency (microseconds)', 'Number of Requests'],
+                    ['1', 0],
+                    ['2', 0],
+                    ['4', 0],
+                    ['8', 0],
+                    ['16', 9],
+                    ['32', 442],
+                    ['64', 1030],
+                    ['128', 1068],
+                    ['256', 1072],
+                    ['512', 1073],
+                    ['+Inf', 1075]
+                ],
+                json_message_latency_milliseconds_bucket: [
+                    ['Latency (milliseconds)', 'Number of Requests'],
+                    ['1', 0],
+                    ['2', 0],
+                    ['4', 1],
+                    ['8', 122],
+                    ['16', 1053],
+                    ['32', 1056],
+                    ['64', 1056],
+                    ['128', 1056],
+                    ['256', 1056],
+                    ['512', 1056],
+                    ['+Inf', 1056]
+                ]
+            };
+
+            Object.entries(data).forEach(([key, value]) => {
+                const data = google.visualization.arrayToDataTable(value);
+
+                const options = {
+                    title: key.replace("_", " ").replace("bucket", ""),
+                    legend: { position: "none" },
+                };
+
+                const body = document.querySelector("body");
+
+                const div = document.createElement("div");
+
+                div.setAttribute("style", "width: 900px; height: 500px; margin-bottom: 20px")
+
+                body.appendChild(div);
+
+                const chart = new google.charts.Bar(div);
+
+                chart.draw(data, options);
+            });
+        }
+    </script>
+</head>
+
+<body></body>
+
+</html>
