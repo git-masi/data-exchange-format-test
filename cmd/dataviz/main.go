@@ -2,26 +2,56 @@ package main
 
 import (
 	"bufio"
+	"log"
 	"net/http"
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
-func fetchChartData() error {
+func main() {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		bm, jm, err := fetchChartData()
+
+		if err != nil {
+			log.Println(err)
+			http.Error(w, "Internal error", http.StatusInternalServerError)
+			return
+		}
+
+		chart(bm, jm).Render(r.Context(), w)
+	})
+
+	server := http.Server{
+		Addr:              ":8080",
+		Handler:           mux,
+		ReadHeaderTimeout: 3 * time.Second,
+	}
+
+	log.Printf("Listening on %v", server.Addr)
+
+	err := server.ListenAndServe()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+func fetchChartData() (map[string]int, map[string]int, error) {
 	resp, err := http.Get("http://127.0.0.1:8080/metrics")
 
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
 	defer resp.Body.Close()
 
 	scanner := bufio.NewScanner(resp.Body)
 
-	readMetrics(scanner)
-
-	return nil
+	return readMetrics(scanner)
 }
 
 func readMetrics(scanner *bufio.Scanner) (map[string]int, map[string]int, error) {
