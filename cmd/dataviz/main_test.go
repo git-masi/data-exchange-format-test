@@ -10,7 +10,7 @@ import (
 )
 
 func TestReadMetrics(t *testing.T) {
-	file, err := os.Open("example.txt")
+	file, err := os.Open("example_metrics.txt")
 
 	if err != nil {
 		log.Fatal(err)
