@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"flag"
 	"log"
 	"math/rand"
 	"net/url"
@@ -11,7 +12,28 @@ import (
 	"github.com/gorilla/websocket"
 )
 
+type JsonMessage struct {
+	Timestamp int64   `json:"timestamp"`
+	Latitude  float32 `json:"latitude"`
+	Longitude float32 `json:"longitude"`
+}
+
 func main() {
+	messageType := flag.String("type", "bin", "Which type of message to use")
+
+	flag.Parse()
+
+	switch *messageType {
+	case "bin":
+		handleBin()
+	case "json":
+		handleJson()
+	default:
+		log.Fatalln("No valid message type supplied")
+	}
+}
+
+func handleBin() {
 	serverURL := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/bin"}
 
 	conn, _, err := websocket.DefaultDialer.Dial(serverURL.String(), nil)
@@ -72,6 +94,61 @@ func main() {
 				}
 
 				buf.Reset()
+			}
+		}
+	}
+}
+
+func handleJson() {
+	serverURL := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/json"}
+
+	conn, _, err := websocket.DefaultDialer.Dial(serverURL.String(), nil)
+
+	if err != nil {
+		log.Fatal("WebSocket connection error:", err)
+	}
+
+	defer conn.Close()
+
+	go func() {
+		for {
+			_, _, err := conn.ReadMessage()
+			if err != nil {
+				log.Println("WebSocket read error:", err)
+				return
+			}
+		}
+	}()
+
+	timer := time.NewTimer(1 * time.Minute)
+
+	log.Println("Test started")
+
+	for {
+		select {
+		case <-timer.C:
+			err = conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(1000, ""), time.Now().Add(time.Millisecond))
+
+			if err != nil {
+				log.Println(err)
+			}
+
+			log.Println("Test ended")
+			return
+		default:
+			{
+				message := JsonMessage{
+					Timestamp: time.Now().UnixMilli(),
+					Latitude:  rand.Float32(),
+					Longitude: rand.Float32(),
+				}
+
+				err = conn.WriteJSON(message)
+
+				if err != nil {
+					log.Println(err)
+					return
+				}
 			}
 		}
 	}
