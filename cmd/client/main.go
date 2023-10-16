@@ -37,12 +37,18 @@ func main() {
 	// Create a buffer big enough to store a timestamp and 2x 32 bit floats
 	buf := bytes.NewBuffer(make([]byte, binary.Size(int64(0))+binary.Size(float32(0))*2))
 
-	log.Println("Starting test")
+	log.Println("Test started")
 
 	for {
 		select {
 		case <-timer.C:
-			log.Println("Finished test")
+			err = conn.WriteControl(websocket.CloseMessage, websocket.FormatCloseMessage(1000, ""), time.Now().Add(time.Millisecond))
+
+			if err != nil {
+				log.Println(err)
+			}
+
+			log.Println("Test ended")
 			return
 		default:
 			{

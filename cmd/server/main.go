@@ -68,8 +68,13 @@ func main() {
 			_, message, err := conn.ReadMessage()
 
 			if err != nil {
+				if websocket.IsCloseError(err, websocket.CloseNormalClosure) {
+					log.Println("Received close code 1000. Closing connection.")
+					return
+				}
+
 				log.Println("Error reading message from WebSocket", err)
-				break
+				return
 			}
 
 			startTime := time.Now()
@@ -82,7 +87,7 @@ func main() {
 
 			if err != nil {
 				log.Println("Error reading timestamp", err)
-				break
+				return
 			}
 
 			var latitude float32
@@ -91,7 +96,7 @@ func main() {
 
 			if err != nil {
 				log.Println("Error reading latitude", err)
-				break
+				return
 			}
 
 			var longitude float32
@@ -100,7 +105,7 @@ func main() {
 
 			if err != nil {
 				log.Println("Error reading longitude", err)
-				break
+				return
 			}
 
 			// Calculate the size of one record: int64 + 2 * float32
@@ -117,7 +122,7 @@ func main() {
 
 			if err != nil {
 				log.Println("Error sending binary message", err)
-				break
+				return
 			}
 
 			endTime := time.Now()
@@ -143,7 +148,7 @@ func main() {
 
 			if err != nil {
 				log.Println("Error reading message from WebSocket", err)
-				break
+				return
 			}
 
 			startTime := time.Now()
@@ -154,14 +159,14 @@ func main() {
 
 			if err != nil {
 				log.Println("Error decoding JSON", err)
-				break
+				return
 			}
 
 			err = conn.WriteJSON(data)
 
 			if err != nil {
 				log.Println("Error encoding JSON", err)
-				break
+				return
 			}
 
 			endTime := time.Now()
