@@ -87,7 +87,7 @@ func readMetrics(scanner *bufio.Scanner) (map[string]int, map[string]int, error)
 	for scanner.Scan() {
 		line := scanner.Text()
 
-		if strings.Contains(line, "binary_message_latency_microseconds_bucket") {
+		if strings.Contains(line, "binary_message_latency_bucket") {
 			before, after, _ := strings.Cut(line, " ")
 
 			time := latencyRegex.FindString(before)
@@ -100,7 +100,7 @@ func readMetrics(scanner *bufio.Scanner) (map[string]int, map[string]int, error)
 			bm[time] = int(numRequests)
 		}
 
-		if strings.Contains(line, "json_message_latency_microseconds_bucket") {
+		if strings.Contains(line, "json_message_latency_bucket") {
 			before, after, _ := strings.Cut(line, " ")
 
 			time := latencyRegex.FindString(before)

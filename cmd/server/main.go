@@ -26,7 +26,7 @@ var upgrader = websocket.Upgrader{
 
 var binaryMessageLatency = prometheus.NewHistogram(
 	prometheus.HistogramOpts{
-		Name:    "binary_message_latency_microseconds",
+		Name:    "binary_message_latency",
 		Help:    "Latency of binary WebSocket messages in microseconds",
 		Buckets: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50},
 	},
@@ -34,7 +34,7 @@ var binaryMessageLatency = prometheus.NewHistogram(
 
 var jsonMessageLatency = prometheus.NewHistogram(
 	prometheus.HistogramOpts{
-		Name:    "json_message_latency_microseconds",
+		Name:    "json_message_latency",
 		Help:    "Latency of JSON WebSocket messages in microseconds",
 		Buckets: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50},
 	},
