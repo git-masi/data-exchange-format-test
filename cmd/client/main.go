@@ -57,7 +57,7 @@ func handleBin() {
 	timer := time.NewTimer(1 * time.Minute)
 
 	// Create a buffer big enough to store a timestamp and 2x 32 bit floats
-	buf := bytes.NewBuffer(make([]byte, binary.Size(int64(0))+binary.Size(float32(0))*2))
+	buf := bytes.NewBuffer(make([]byte, 0, binary.Size(int64(0))+binary.Size(float32(0))*2))
 
 	log.Println("Test started")
 

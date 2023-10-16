@@ -64,7 +64,12 @@ func main() {
 
 		defer conn.Close()
 
+		// Create a buffer big enough to store a timestamp and 2x 32 bit floats
+		writeBuf := bytes.NewBuffer(make([]byte, 0, binary.Size(int64(0))+binary.Size(float32(0))*2))
+
 		for {
+			startTime := time.Now()
+
 			_, message, err := conn.ReadMessage()
 
 			if err != nil {
@@ -77,13 +82,11 @@ func main() {
 				return
 			}
 
-			startTime := time.Now()
-
-			buf := bytes.NewReader(message)
+			readBuf := bytes.NewReader(message)
 
 			var timestamp int64
 
-			err = binary.Read(buf, binary.BigEndian, &timestamp)
+			err = binary.Read(readBuf, binary.BigEndian, &timestamp)
 
 			if err != nil {
 				log.Println("Error reading timestamp", err)
@@ -92,7 +95,7 @@ func main() {
 
 			var latitude float32
 
-			err = binary.Read(buf, binary.BigEndian, &latitude)
+			err = binary.Read(readBuf, binary.BigEndian, &latitude)
 
 			if err != nil {
 				log.Println("Error reading latitude", err)
@@ -101,29 +104,25 @@ func main() {
 
 			var longitude float32
 
-			err = binary.Read(buf, binary.BigEndian, &longitude)
+			err = binary.Read(readBuf, binary.BigEndian, &longitude)
 
 			if err != nil {
 				log.Println("Error reading longitude", err)
 				return
 			}
 
-			// Calculate the size of one record: int64 + 2 * float32
-			// Pre-allocate a buffer
-			resp := bytes.NewBuffer(make([]byte, 0, binary.Size(int64(0))+2*binary.Size(float32(0))))
+			binary.Write(writeBuf, binary.BigEndian, timestamp)
+			binary.Write(writeBuf, binary.BigEndian, latitude)
+			binary.Write(writeBuf, binary.BigEndian, longitude)
 
-			binary.Write(resp, binary.BigEndian, timestamp)
-
-			binary.Write(resp, binary.BigEndian, latitude)
-
-			binary.Write(resp, binary.BigEndian, longitude)
-
-			err = conn.WriteMessage(websocket.BinaryMessage, resp.Bytes())
+			err = conn.WriteMessage(websocket.BinaryMessage, writeBuf.Bytes())
 
 			if err != nil {
 				log.Println("Error sending binary message", err)
 				return
 			}
+
+			writeBuf.Reset()
 
 			endTime := time.Now()
 
@@ -144,13 +143,6 @@ func main() {
 		defer conn.Close()
 
 		for {
-			_, _, err := conn.ReadMessage()
-
-			if err != nil {
-				log.Println("Error reading message from WebSocket", err)
-				return
-			}
-
 			startTime := time.Now()
 
 			var data JsonData
