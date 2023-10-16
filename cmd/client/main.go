@@ -37,9 +37,12 @@ func main() {
 	// Create a buffer big enough to store a timestamp and 2x 32 bit floats
 	buf := bytes.NewBuffer(make([]byte, binary.Size(int64(0))+binary.Size(float32(0))*2))
 
+	log.Println("Starting test")
+
 	for {
 		select {
 		case <-timer.C:
+			log.Println("Finished test")
 			return
 		default:
 			{
