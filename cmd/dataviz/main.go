@@ -2,8 +2,10 @@ package main
 
 import (
 	"bufio"
+	"flag"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
 	"strconv"
 	"strings"
@@ -11,10 +13,42 @@ import (
 )
 
 func main() {
+	testFlag := flag.Bool("test", false, "Enable test mode")
+
+	flag.Parse()
+
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		bm, jm, err := fetchChartData()
+		var scanner *bufio.Scanner
+
+		if *testFlag == true {
+			file, err := os.Open("example_metrics.txt")
+
+			if err != nil {
+				log.Println(err)
+				http.Error(w, "Internal error", http.StatusInternalServerError)
+				return
+			}
+
+			defer file.Close()
+
+			scanner = bufio.NewScanner(file)
+		} else {
+			resp, err := http.Get("http://127.0.0.1:8080/metrics")
+
+			if err != nil {
+				log.Println(err)
+				http.Error(w, "Internal error", http.StatusInternalServerError)
+				return
+			}
+
+			defer resp.Body.Close()
+
+			scanner = bufio.NewScanner(resp.Body)
+		}
+
+		bm, jm, err := readMetrics(scanner)
 
 		if err != nil {
 			log.Println(err)
@@ -38,20 +72,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func fetchChartData() (map[string]int, map[string]int, error) {
-	resp, err := http.Get("http://127.0.0.1:8080/metrics")
-
-	if err != nil {
-		return nil, nil, err
-	}
-
-	defer resp.Body.Close()
-
-	scanner := bufio.NewScanner(resp.Body)
-
-	return readMetrics(scanner)
 }
 
 func readMetrics(scanner *bufio.Scanner) (map[string]int, map[string]int, error) {
