@@ -1,1 +1,1 @@
-Run the dataviz app: `go run cmd/dataviz/*[^_test].go`
+Run the dataviz app: `cd cmd/dataviz/ && go run *[^_test].go`
