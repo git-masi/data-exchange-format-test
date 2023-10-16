@@ -12,8 +12,8 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type JsonMessage struct {
-	Timestamp int64   `json:"timestamp"`
+type JsonData struct {
+	Time      int64   `json:"time"`
 	Latitude  float32 `json:"latitude"`
 	Longitude float32 `json:"longitude"`
 }
@@ -137,8 +137,8 @@ func handleJson() {
 			return
 		default:
 			{
-				message := JsonMessage{
-					Timestamp: time.Now().UnixMilli(),
+				message := JsonData{
+					Time:      time.Now().UnixMilli(),
 					Latitude:  rand.Float32(),
 					Longitude: rand.Float32(),
 				}
