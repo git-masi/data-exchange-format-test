@@ -54,7 +54,7 @@ func main() {
 
 	mux.Handle("/metrics", promhttp.Handler())
 
-	mux.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/bin", func(w http.ResponseWriter, r *http.Request) {
 		conn, err := upgrader.Upgrade(w, r, nil)
 
 		if err != nil {
