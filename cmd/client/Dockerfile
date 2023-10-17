@@ -7,5 +7,5 @@ COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
 # Copy the rest of the files from cmd/server
-COPY cmd/server/ .
+COPY cmd/client/ .
 RUN go build -v -o /usr/local/bin/app ./main.go

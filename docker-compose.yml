@@ -1,5 +1,7 @@
 version: '3'
 
+name: def-test
+
 services:
   server:
     build:
@@ -7,3 +9,13 @@ services:
       dockerfile: ./cmd/server/Dockerfile
     ports:
       - "8080:8080"
+    command: ["app"]
+
+  client:
+    build:
+      context: .
+      dockerfile: ./cmd/client/Dockerfile
+    depends_on:
+      - server
+    command: ["app", "--host=host.docker.internal:8080"]
+
