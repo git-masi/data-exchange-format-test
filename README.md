@@ -1,5 +1,13 @@
 # Data Exchange Format Performance Test
 
+## About
+
+The purpose of this repo is to create a test that can answer the question: "does the data exchange format used between client and server impact performance?"
+
+### This is for fun
+
+Please note this is just for fun and is not meant to be academically rigorous. Nor is this meant to serve as a guide for what you should or should not due in a production application. The code found here may or may not be idiomatic, is probably not clean, and is likely to be very, very WET (meow). Many good coding practices have been thrown out the window in favor of getting something done quickly.
+
 ## Server
 
 Start the server with `go run cmd/server/main.go`.
