@@ -26,11 +26,11 @@ Optionally configure the WebSocket host name with the `--host` flag. For example
 
 ### JavaScript
 
-Start the JavaScript client with `cd cmd/client/ && npm start`.
+Start the JavaScript client with `cd cmd/js-client/ && npm start`.
 
-Optionally configure the type of message to send by passing in an argument. For example `cd cmd/client/ && npm start json`.
+Optionally configure the type of message to send by passing in an argument. For example `cd cmd/js-client/ && npm start json`.
 
-Optionally configure the WebSocket host name by passing in an argument (note you must also pass in a message type argument). For example `cd cmd/client/ && npm start json "example.com"`.
+Optionally configure the WebSocket host name by passing in an argument (note you must also pass in a message type argument). For example `cd cmd/js-client/ && npm start json "example.com"`.
 
 ## Dataviz
 
