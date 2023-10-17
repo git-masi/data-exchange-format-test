@@ -19,7 +19,7 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/charts", func(w http.ResponseWriter, r *http.Request) {
 		var scanner *bufio.Scanner
 
 		if *testFlag == true {
@@ -36,7 +36,6 @@ func main() {
 			scanner = bufio.NewScanner(file)
 		} else {
 			resp, err := http.Get("http://127.0.0.1:8080/metrics")
-
 			if err != nil {
 				log.Println(err)
 				http.Error(w, "Internal error", http.StatusInternalServerError)
