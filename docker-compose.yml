@@ -15,7 +15,11 @@ services:
     build:
       context: .
       dockerfile: ./cmd/client/Dockerfile
-    depends_on:
-      - server
     command: ["app", "--host=host.docker.internal:8080"]
+
+  jsclient:
+    build:
+      context: .
+      dockerfile: ./cmd/js-client/Dockerfile
+    command: ["node", "index.mjs", "bin", "host.docker.internal:8080"]
 
