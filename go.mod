@@ -1,4 +1,4 @@
-module github.com/git-masi/binary-web-socket
+module github.com/git-masi/data-exchange-format-performance-test
 
 go 1.20
 
