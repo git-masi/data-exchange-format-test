@@ -25,15 +25,15 @@ func main() {
 
 	switch *messageType {
 	case "bin":
-		handleBin()
+		spamBinaryMessage()
 	case "json":
-		handleJson()
+		spamJsonMessage()
 	default:
 		log.Fatalln("No valid message type supplied")
 	}
 }
 
-func handleBin() {
+func spamBinaryMessage() {
 	serverURL := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/bin"}
 
 	conn, _, err := websocket.DefaultDialer.Dial(serverURL.String(), nil)
@@ -99,7 +99,7 @@ func handleBin() {
 	}
 }
 
-func handleJson() {
+func spamJsonMessage() {
 	serverURL := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/json"}
 
 	conn, _, err := websocket.DefaultDialer.Dial(serverURL.String(), nil)
