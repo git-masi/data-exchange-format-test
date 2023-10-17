@@ -20,21 +20,22 @@ type JsonData struct {
 
 func main() {
 	messageType := flag.String("type", "bin", "Which type of message to use")
+	host := flag.String("host", "localhost:8080", "The WebSocket host name")
 
 	flag.Parse()
 
 	switch *messageType {
 	case "bin":
-		spamBinaryMessage()
+		spamBinaryMessage(*host, *messageType)
 	case "json":
-		spamJsonMessage()
+		spamJsonMessage(*host, *messageType)
 	default:
 		log.Fatalln("No valid message type supplied")
 	}
 }
 
-func spamBinaryMessage() {
-	serverURL := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/bin"}
+func spamBinaryMessage(host, path string) {
+	serverURL := url.URL{Scheme: "ws", Host: host, Path: path}
 
 	conn, _, err := websocket.DefaultDialer.Dial(serverURL.String(), nil)
 
@@ -99,8 +100,8 @@ func spamBinaryMessage() {
 	}
 }
 
-func spamJsonMessage() {
-	serverURL := url.URL{Scheme: "ws", Host: "localhost:8080", Path: "/json"}
+func spamJsonMessage(host, path string) {
+	serverURL := url.URL{Scheme: "ws", Host: host, Path: path}
 
 	conn, _, err := websocket.DefaultDialer.Dial(serverURL.String(), nil)
 
