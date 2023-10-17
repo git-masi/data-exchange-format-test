@@ -14,6 +14,7 @@ import (
 
 func main() {
 	testFlag := flag.Bool("test", false, "Enable test mode")
+	metricsUrl := flag.String("url", "http://127.0.0.1:8080/metrics", "The URL to use to fetch Prometheus metrics")
 
 	flag.Parse()
 
@@ -35,7 +36,7 @@ func main() {
 
 			scanner = bufio.NewScanner(file)
 		} else {
-			resp, err := http.Get("http://127.0.0.1:8080/metrics")
+			resp, err := http.Get(*metricsUrl)
 			if err != nil {
 				log.Println(err)
 				http.Error(w, "Internal error", http.StatusInternalServerError)
