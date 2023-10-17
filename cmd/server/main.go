@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/binary"
+	"flag"
 	"log"
 	"net/http"
 	"time"
@@ -24,34 +25,35 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-var binaryMessageLatency = prometheus.NewHistogram(
-	prometheus.HistogramOpts{
-		Name: "binary_message_latency",
-		Help: "Latency of binary WebSocket messages in microseconds",
-		// JS client values
-		Buckets: []float64{10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 250, 500, 1000},
-		// Go client values
-		// Buckets: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50},
-	},
-)
+func main() {
+	bucketConfig := flag.String("buckets", "go", "The config settings for the prometheus buckets")
 
-var jsonMessageLatency = prometheus.NewHistogram(
-	prometheus.HistogramOpts{
-		Name: "json_message_latency",
-		Help: "Latency of JSON WebSocket messages in microseconds",
-		// JS client values
-		Buckets: []float64{10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 250, 500, 1000},
-		// Go client values
-		// Buckets: []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50},
-	},
-)
+	flag.Parse()
 
-func init() {
+	buckets := map[string][]float64{
+		"go": {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50},
+		"js": {10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 150, 250, 500, 1000, 1500},
+	}
+
+	binaryMessageLatency := prometheus.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "binary_message_latency",
+			Help:    "Latency of binary WebSocket messages in microseconds",
+			Buckets: buckets[*bucketConfig],
+		},
+	)
+
+	jsonMessageLatency := prometheus.NewHistogram(
+		prometheus.HistogramOpts{
+			Name:    "json_message_latency",
+			Help:    "Latency of JSON WebSocket messages in microseconds",
+			Buckets: buckets[*bucketConfig],
+		},
+	)
+
 	prometheus.MustRegister(binaryMessageLatency)
 	prometheus.MustRegister(jsonMessageLatency)
-}
 
-func main() {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
