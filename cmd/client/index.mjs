@@ -4,13 +4,14 @@ import WebSocket from "ws";
 
 (() => {
   const messageType = process.argv[2] || "bin";
+  const host = process.argv[3] || "localhost:8080";
 
   switch (messageType) {
     case "bin":
-      handleBin();
+      handleBin(`ws://${host}/bin`);
       break;
     case "json":
-      handleJson();
+      handleJson(`ws://${host}/json`);
       break;
     default:
       console.log("No valid message type supplied");
@@ -18,8 +19,11 @@ import WebSocket from "ws";
   }
 })();
 
-function handleBin() {
-  const ws = new WebSocket("ws://localhost:8080/bin");
+/**
+ * @param {string} url
+ */
+function handleBin(url) {
+  const ws = new WebSocket(url);
   let done = false;
 
   ws.on("close", () => {
@@ -56,8 +60,11 @@ function handleBin() {
   });
 }
 
-function handleJson() {
-  const ws = new WebSocket("ws://localhost:8080/json");
+/**
+ * @param {string} url
+ */
+function handleJson(url) {
+  const ws = new WebSocket(url);
   let done = false;
 
   ws.on("close", () => {
