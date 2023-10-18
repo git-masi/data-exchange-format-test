@@ -1,4 +1,4 @@
-module github.com/git-masi/data-exchange-format-performance-test
+module github.com/git-masi/data-exchange-format-test
 
 go 1.20
 
