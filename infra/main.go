@@ -22,6 +22,18 @@ func NewDataExchangeFormatTestStackStack(scope constructs.Construct, id string, 
 
 	vpc := awsec2.NewVpc(stack, jsii.String("DataExchangeFormatTestVpc"), nil)
 
+	// Create a new security group
+	securityGroup := awsec2.NewSecurityGroup(stack, jsii.String("DataExchangeFormatTestSecurityGroup"), &awsec2.SecurityGroupProps{
+		Vpc:         vpc,
+		Description: jsii.String("Security group for the Data Exchange Format Test"),
+	})
+
+	// Add an inbound rule to allow TCP traffic on port 80 from any IP
+	securityGroup.AddIngressRule(awsec2.Peer_AnyIpv4(), awsec2.Port_Tcp(jsii.Number(80)), jsii.String("Allow HTTP traffic"), jsii.Bool(false))
+
+	// Add an outbound rule to allow TCP traffic on port 80 from any IP
+	securityGroup.AddEgressRule(awsec2.Peer_AnyIpv4(), awsec2.Port_Tcp(jsii.Number(80)), jsii.String("Allow HTTP traffic"), jsii.Bool(false))
+
 	awsec2.NewInstance(stack, jsii.String("DataExchangeFormatTestServer"), &awsec2.InstanceProps{
 		Vpc:          vpc,
 		InstanceType: awsec2.NewInstanceType(jsii.String("t2.micro")),
