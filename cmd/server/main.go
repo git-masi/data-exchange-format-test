@@ -27,6 +27,7 @@ var upgrader = websocket.Upgrader{
 
 func main() {
 	bucketConfig := flag.String("buckets", "go", "The config settings for the prometheus buckets")
+	addr := flag.String("addr", ":8080", "The address for the server to listen on")
 
 	flag.Parse()
 
@@ -178,7 +179,7 @@ func main() {
 	})
 
 	server := http.Server{
-		Addr:              ":8080",
+		Addr:              *addr,
 		Handler:           mux,
 		ReadHeaderTimeout: 3 * time.Second,
 	}
