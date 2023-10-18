@@ -20,7 +20,17 @@ func NewDataExchangeFormatTestStackStack(scope constructs.Construct, id string, 
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
-	vpc := awsec2.NewVpc(stack, jsii.String("DataExchangeFormatTestVpc"), nil)
+	vpc := awsec2.NewVpc(stack, jsii.String("DataExchangeFormatTestVpc"), &awsec2.VpcProps{
+		SubnetConfiguration: &[]*awsec2.SubnetConfiguration{
+			{
+				SubnetType:          awsec2.SubnetType_PUBLIC,
+				Name:                jsii.String("PublicSubnet"),
+				CidrMask:            jsii.Number(24),
+				MapPublicIpOnLaunch: jsii.Bool(true),
+			},
+		},
+		NatGateways: jsii.Number(1),
+	})
 
 	// Create a new security group
 	securityGroup := awsec2.NewSecurityGroup(stack, jsii.String("DataExchangeFormatTestSecurityGroup"), &awsec2.SecurityGroupProps{
@@ -31,10 +41,15 @@ func NewDataExchangeFormatTestStackStack(scope constructs.Construct, id string, 
 	// Add an inbound rule to allow TCP traffic on port 80 from any IP
 	securityGroup.AddIngressRule(awsec2.Peer_AnyIpv4(), awsec2.Port_Tcp(jsii.Number(80)), jsii.String("Allow HTTP traffic"), jsii.Bool(false))
 
+	// Add an inbound rule to allow SSH traffic on port 22 from any IP
+	securityGroup.AddIngressRule(awsec2.Peer_AnyIpv4(), awsec2.Port_Tcp(jsii.Number(22)), jsii.String("Allow SSH access"), jsii.Bool(false))
+
 	awsec2.NewInstance(stack, jsii.String("DataExchangeFormatTestServer"), &awsec2.InstanceProps{
-		Vpc:          vpc,
-		InstanceType: awsec2.NewInstanceType(jsii.String("t2.micro")),
-		MachineImage: awsec2.NewAmazonLinuxImage(&awsec2.AmazonLinuxImageProps{}),
+		Vpc:                      vpc,
+		InstanceType:             awsec2.NewInstanceType(jsii.String("t2.micro")),
+		MachineImage:             awsec2.NewAmazonLinuxImage(&awsec2.AmazonLinuxImageProps{}),
+		AssociatePublicIpAddress: jsii.Bool(true),
+		KeyName:                  jsii.String("data-exchange-format-test"),
 	})
 
 	awsec2.NewInstance(stack, jsii.String("DataExchangeFormatTestGoClient"), &awsec2.InstanceProps{
