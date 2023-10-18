@@ -51,9 +51,10 @@ func main() {
 	NewDataExchangeFormatTestStackStack(app, "DataExchangeFormatTestStack", &DataExchangeFormatTestStackProps{
 		awscdk.StackProps{
 			Env: env(),
-			Synthesizer: awscdk.NewDefaultStackSynthesizer(&awscdk.DefaultStackSynthesizerProps{
-				FileAssetsBucketName: jsii.String("eric-experiments-k9xjhbjk3r4s"),
-			}),
+			// Eventually I want to be able to reuse an S3 bucket
+			// Synthesizer: awscdk.NewDefaultStackSynthesizer(&awscdk.DefaultStackSynthesizerProps{
+			// 	FileAssetsBucketName: jsii.String("eric-experiments-k9xjhbjk3r4s"),
+			// }),
 		},
 	})
 
