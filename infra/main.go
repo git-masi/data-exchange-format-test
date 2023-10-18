@@ -20,7 +20,7 @@ func NewDataExchangeFormatTestStackStack(scope constructs.Construct, id string, 
 	}
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
-	vpc := awsec2.NewVpc(scope, jsii.String("DataExchangeFormatTestVpc"), nil)
+	vpc := awsec2.NewVpc(stack, jsii.String("DataExchangeFormatTestVpc"), nil)
 
 	awsec2.NewInstance(stack, jsii.String("DataExchangeFormatTestServer"), &awsec2.InstanceProps{
 		Vpc:          vpc,
