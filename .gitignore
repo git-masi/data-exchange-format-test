@@ -26,3 +26,7 @@ cdk.out
 
 # ENV vars
 *.env
+
+# Binary output from `go build` in the infra/ dir
+infra.bin
+infra
