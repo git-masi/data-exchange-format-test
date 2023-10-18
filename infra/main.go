@@ -31,9 +31,6 @@ func NewDataExchangeFormatTestStackStack(scope constructs.Construct, id string, 
 	// Add an inbound rule to allow TCP traffic on port 80 from any IP
 	securityGroup.AddIngressRule(awsec2.Peer_AnyIpv4(), awsec2.Port_Tcp(jsii.Number(80)), jsii.String("Allow HTTP traffic"), jsii.Bool(false))
 
-	// Add an outbound rule to allow TCP traffic on port 80 from any IP
-	securityGroup.AddEgressRule(awsec2.Peer_AnyIpv4(), awsec2.Port_Tcp(jsii.Number(80)), jsii.String("Allow HTTP traffic"), jsii.Bool(false))
-
 	awsec2.NewInstance(stack, jsii.String("DataExchangeFormatTestServer"), &awsec2.InstanceProps{
 		Vpc:          vpc,
 		InstanceType: awsec2.NewInstanceType(jsii.String("t2.micro")),
