@@ -31,3 +31,6 @@ cdk.context.json
 # Binary output from `go build` in the infra/ dir
 infra/infra.bin
 infra/infra
+
+# SSH
+*.pem
