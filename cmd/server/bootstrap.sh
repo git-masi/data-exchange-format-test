@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Update package list and install git and wget
-sudo apt update
-sudo apt install -y git wget
+sudo yum update
+sudo yum install -y git wget
 
 # Download and install Go 1.20.5
 wget https://golang.org/dl/go1.20.5.linux-amd64.tar.gz
