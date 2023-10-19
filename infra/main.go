@@ -56,12 +56,14 @@ func NewDataExchangeFormatTestStackStack(scope constructs.Construct, id string, 
 		Vpc:          vpc,
 		InstanceType: awsec2.NewInstanceType(jsii.String("t2.micro")),
 		MachineImage: awsec2.NewAmazonLinuxImage(&awsec2.AmazonLinuxImageProps{}),
+		KeyName:      jsii.String("data-exchange-format-test"),
 	})
 
 	awsec2.NewInstance(stack, jsii.String("DataExchangeFormatTestJsClient"), &awsec2.InstanceProps{
 		Vpc:          vpc,
 		InstanceType: awsec2.NewInstanceType(jsii.String("t2.micro")),
 		MachineImage: awsec2.NewAmazonLinuxImage(&awsec2.AmazonLinuxImageProps{}),
+		KeyName:      jsii.String("data-exchange-format-test"),
 	})
 
 	return stack
