@@ -21,4 +21,4 @@ cd data-exchange-format-test/cmd/server
 go build
 
 # Run the server
-./server
+sudo ./server --addr="0.0.0.0:80"
