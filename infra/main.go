@@ -38,6 +38,9 @@ func NewDataExchangeFormatTestStackStack(scope constructs.Construct, id string, 
 		Description: jsii.String("Security group for the Data Exchange Format Test"),
 	})
 
+	// Add an inbound rule to allow TCP traffic on port 80 only from the same VPC
+	securityGroup.AddIngressRule(awsec2.Peer_Ipv4(vpc.VpcCidrBlock()), awsec2.Port_Tcp(jsii.Number(80)), jsii.String("Allow HTTP traffic within VPC"), jsii.Bool(false))
+
 	// Add an inbound rule to allow TCP traffic on port 80 from any IP
 	securityGroup.AddIngressRule(awsec2.Peer_AnyIpv4(), awsec2.Port_Tcp(jsii.Number(80)), jsii.String("Allow HTTP traffic"), jsii.Bool(false))
 
@@ -53,19 +56,14 @@ func NewDataExchangeFormatTestStackStack(scope constructs.Construct, id string, 
 		KeyName:                  jsii.String("data-exchange-format-test"),
 	})
 
-	// awsec2.NewInstance(stack, jsii.String("DataExchangeFormatTestGoClient"), &awsec2.InstanceProps{
-	// 	Vpc:          vpc,
-	// 	InstanceType: awsec2.NewInstanceType(jsii.String("t2.micro")),
-	// 	MachineImage: awsec2.NewAmazonLinuxImage(&awsec2.AmazonLinuxImageProps{}),
-	// 	KeyName:      jsii.String("data-exchange-format-test"),
-	// })
-
-	// awsec2.NewInstance(stack, jsii.String("DataExchangeFormatTestJsClient"), &awsec2.InstanceProps{
-	// 	Vpc:          vpc,
-	// 	InstanceType: awsec2.NewInstanceType(jsii.String("t2.micro")),
-	// 	MachineImage: awsec2.NewAmazonLinuxImage(&awsec2.AmazonLinuxImageProps{}),
-	// 	KeyName:      jsii.String("data-exchange-format-test"),
-	// })
+	awsec2.NewInstance(stack, jsii.String("DataExchangeFormatTestClient"), &awsec2.InstanceProps{
+		Vpc:                      vpc,
+		SecurityGroup:            securityGroup,
+		InstanceType:             awsec2.NewInstanceType(jsii.String("t2.micro")),
+		MachineImage:             awsec2.NewAmazonLinuxImage(&awsec2.AmazonLinuxImageProps{}),
+		AssociatePublicIpAddress: jsii.Bool(true),
+		KeyName:                  jsii.String("data-exchange-format-test"),
+	})
 
 	return stack
 }
